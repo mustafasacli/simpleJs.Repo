@@ -7,12 +7,14 @@
 * -
 */
 $(document).ready(function () {
-    callSimpleAjaxDropDowns();
+    setTimeout(function () {
+        callSimpleAjaxDropDowns();
+    }, 500);
 });
 
-function loadDropDownWithOps(dropDown, dropDownUrl, selectedValue, defaultText = "Seçiniz", default_text_value,
+function loadDropDownWithOps(dropDownId, dropDownUrl, selectedValue, defaultText = "Seçiniz", default_text_value,
     valueProperty = "Value", textProperty = "Text", url_values, error_function, pre_action, post_action) {
-    //let dropDown = $('#' + dropDownId);
+    let dropDown = $('#' + dropDownId);
 
     if (isNotNullAndUndefined(dropDown) === false)
         throw new Error('dropdown element not found.');
@@ -29,7 +31,9 @@ function loadDropDownWithOps(dropDown, dropDownUrl, selectedValue, defaultText =
         throw new Error('value property for ajax request should be defined.');
 
     if (isNullOrWhiteSpace(defaultText) === false || isNullOrWhiteSpace(toNullString(default_text_value)) === false) {
-        dropDown.append('<option value="' + toNullString(default_text_value) + '">' + toNullString(defaultText) + '</option>');
+        dropDown.append($('<option></option>')
+            .attr('value', toNullString(default_text_value))
+            .text(toNullString(defaultText)));
     }
 
     try {
@@ -42,16 +46,18 @@ function loadDropDownWithOps(dropDown, dropDownUrl, selectedValue, defaultText =
 
     $.getJSON(dropDownUrl, url_values, function (response) {
         $.each(response, function (key, entry) {
+            //debugger;
             dropDown.append($('<option></option>')
                 .attr('value', entry[valueProperty])
                 .text(entry[textProperty]));
         });
     }).done(function () {
         try {
+            debugger;
             if (isNotNullAndUndefined(selectedValue) && isNullOrWhiteSpace(toNullString(selectedValue)) === false) {
-                //setTimeout(function () {
+                setTimeout(function () {
                 dropDown.val(selectedValue);
-                //}, 500);
+                }, 100);
                 // console.log(selectedValue);
             } else {
                 dropDown.prop('selectedIndex', 0);
@@ -61,6 +67,7 @@ function loadDropDownWithOps(dropDown, dropDownUrl, selectedValue, defaultText =
         }
 
         try {
+            debugger;
             if (isNotNullAndUndefined(post_action) && isNullOrWhiteSpace(toNullString(post_action)) === false) {
                 post_action();
             }
@@ -78,44 +85,45 @@ function loadDropDownWithOps(dropDown, dropDownUrl, selectedValue, defaultText =
  TODO : SHOULD BE TESTED.
  */
 function callSimpleAjaxDropDowns() {
-    $(".select simple-ajax-call").forEach(function (selectElement) {
-        rebuildDropDown(selectElement);
+    // debugger;
+    $.each($(".simple-ajax-call"), function (key, entry) {
+        rebuildDropDown(entry);
     });
 }
 
 function rebuildDropDown(dropdownElement) {
     try {
-        // remove any existing options
-        dropdownElement.empty();
+        // debugger;
         /**
          * <div class="col-md-4">
             <div class="form-group form-md-line-input form-md-floating-label">
                 <label for="dropDownId" class="control-label">Choice: </label>
                 <select id="dropDownId" class="form-control select2 tooltips simple-ajax-call"
-                action_url="" text_item="" value_item="" default_value="" default_text=""
+                action_url="" text_item="" value_item="" default_value="" default_text="" default_text_value=""
                 value_dictionary_function="" error_function="" pre_action="" post_action=""></select>
             </div>
         </div>
-         * */
+         **/
         // ajax call and build drop down.
+
         let action_url_value = dropdownElement.getAttribute('action_url');
         let text_item_value = dropdownElement.getAttribute('text_item');
         let value_item_value = dropdownElement.getAttribute('value_item');
         let default_value = dropdownElement.getAttribute('default_value');
         let default_text = toNullString(dropdownElement.getAttribute('default_text'));
         let default_text_value = toNullString(dropdownElement.getAttribute('default_text_value'));
-        let value_dictionary_function = selectElement.getAttribute('value_dictionary_function');
-        let error_function = selectElement.getAttribute('error_function');
+        let value_dictionary_function = dropdownElement.getAttribute('value_dictionary_function');
+        let error_function = dropdownElement.getAttribute('error_function');
         let values = null;
-        let pre_action = selectElement.getAttribute('pre_action');
-        let post_action = selectElement.getAttribute('post_action');
+        let pre_action = dropdownElement.getAttribute('pre_action');
+        let post_action = dropdownElement.getAttribute('post_action');
 
         if (isNotNullAndUndefined(value_dictionary_function) && isNullOrWhiteSpace(toNullString(value_dictionary_function)) === false) {
             values = value_dictionary_function();
         }
 
         loadDropDownWithOps(
-            dropdown, action_url_value, default_value, toNullString(default_text), default_text_value,
+            dropdownElement.id, action_url_value, default_value, toNullString(default_text), default_text_value,
             value_item_value, text_item_value, values, function () {
                 console.log('Error at loading drop down with ' + dropdownElement.id + ' id.');
 
@@ -127,3 +135,19 @@ function rebuildDropDown(dropdownElement) {
         console.error(err);
     }
 }
+
+/*
+ Using;
+        <div class="col-md-4">
+            <div class="form-group form-md-line-input form-md-floating-label">
+                <label for="VergiDairesiId2" class="control-label">Vergi Dairesi: </label>
+                <select id="VergiDairesiId2" class="form-control select2 tooltips simple-ajax-call"
+                        action_url="@vergiDairesiListeUrl" text_item="Text" value_item="Value" default_value="@Model.VergiDairesiId" default_text="Seçiniz"
+                        default_text_value="" value_dictionary_function="" error_function="" pre_action="" post_action=""></select>
+            </div>
+        </div>
+
+<script src="~/Scripts/simplejs.common.1.0.0.js" type="text/javascript"></script>
+<script src="~/Scripts/simplejs.component.1.0.0.js" type="text/javascript"></script>
+<script src="~/Scripts/simplejs.dropdown.1.0.0.js" type="text/javascript"></script>
+ */
