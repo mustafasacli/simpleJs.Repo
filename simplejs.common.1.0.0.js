@@ -70,3 +70,12 @@ function encodeAsHtml(controlId) {
 
     return returnValue;
 }
+
+function encodeText(value) {
+    var returnValue = '';
+    if (isNotNullAndUndefined(value)) {
+        returnValue = encodeURIComponent(value);
+    }
+
+    return returnValue;
+}
