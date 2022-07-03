@@ -3,7 +3,7 @@
 */
 /**
 * Dependencies Simple scripts;
-* -
+* - simplejs.common.1.0.0.js
 * -
 */
 function confirmDialog(title, content, confirmDoneFunction, confirmCancelFunction){
