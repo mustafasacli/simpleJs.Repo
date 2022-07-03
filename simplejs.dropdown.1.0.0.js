@@ -99,7 +99,7 @@ function rebuildDropDown(dropdownElement) {
             <div class="form-group form-md-line-input form-md-floating-label">
                 <label for="dropDownId" class="control-label">Choice: </label>
                 <select id="dropDownId" class="form-control select2 tooltips simple-ajax-call"
-                action_url="" text_item="" value_item="" default_value="" default_text="" default_text_value=""
+                action_url="" text_item="" value_item="" default_value_function="" default_text="" default_text_value=""
                 value_dictionary_function="" error_function="" pre_action="" post_action=""></select>
             </div>
         </div>
@@ -109,7 +109,7 @@ function rebuildDropDown(dropdownElement) {
         let action_url_value = dropdownElement.getAttribute('action_url');
         let text_item_value = dropdownElement.getAttribute('text_item');
         let value_item_value = dropdownElement.getAttribute('value_item');
-        let default_value = dropdownElement.getAttribute('default_value');
+        let default_value_function = dropdownElement.getAttribute('default_value_function');
         let default_text = toNullString(dropdownElement.getAttribute('default_text'));
         let default_text_value = toNullString(dropdownElement.getAttribute('default_text_value'));
         let value_dictionary_function = dropdownElement.getAttribute('value_dictionary_function');
@@ -121,7 +121,14 @@ function rebuildDropDown(dropdownElement) {
         if (isNotNullAndUndefined(value_dictionary_function) && isNullOrWhiteSpace(toNullString(value_dictionary_function)) === false) {
             values = value_dictionary_function();
         }
-
+		let default_value = null;
+        if (isNotNullAndUndefined(default_value_function) && isNullOrWhiteSpace(toNullString(default_value_function)) === false) {
+            default_value = default_value_function();
+			if(isNotNullAndUndefined(default_value)){
+				default_value = default_value_function;
+			}
+        }
+		
         loadDropDownWithOps(
             dropdownElement.id, action_url_value, default_value, toNullString(default_text), default_text_value,
             value_item_value, text_item_value, values, function () {
