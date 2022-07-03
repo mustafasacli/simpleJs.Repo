@@ -46,14 +46,14 @@ function loadDropDownWithOps(dropDownId, dropDownUrl, selectedValue, defaultText
 
     $.getJSON(dropDownUrl, url_values, function (response) {
         $.each(response, function (key, entry) {
-            //debugger;
+            // debugger;
             dropDown.append($('<option></option>')
                 .attr('value', entry[valueProperty])
                 .text(entry[textProperty]));
         });
     }).done(function () {
         try {
-            debugger;
+            // debugger;
             if (isNotNullAndUndefined(selectedValue) && isNullOrWhiteSpace(toNullString(selectedValue)) === false) {
                 setTimeout(function () {
                 dropDown.val(selectedValue);
@@ -62,12 +62,14 @@ function loadDropDownWithOps(dropDownId, dropDownUrl, selectedValue, defaultText
             } else {
                 dropDown.prop('selectedIndex', 0);
             }
+
+            triggerComponent('#' + dropDownId, 'change');
         } catch (err) {
             console.error(err);
         }
 
         try {
-            debugger;
+            // debugger;
             if (isNotNullAndUndefined(post_action) && isNullOrWhiteSpace(toNullString(post_action)) === false) {
                 post_action();
             }
@@ -119,23 +121,23 @@ function rebuildDropDown(dropdownElement) {
         let post_action = dropdownElement.getAttribute('post_action');
 
         if (isNotNullAndUndefined(value_dictionary_function) && isNullOrWhiteSpace(toNullString(value_dictionary_function)) === false) {
-            values = value_dictionary_function();
+            values = window[value_dictionary_function]();
         }
-		let default_value = null;
+        let default_value = null;
         if (isNotNullAndUndefined(default_value_function) && isNullOrWhiteSpace(toNullString(default_value_function)) === false) {
-            default_value = default_value_function();
-			if(isNotNullAndUndefined(default_value)){
-				default_value = default_value_function;
-			}
+            default_value = window[default_value_function]();
+            if(isNotNullAndUndefined(default_value) === false){
+                default_value = default_value_function;
+            }
         }
-		
+        
         loadDropDownWithOps(
             dropdownElement.id, action_url_value, default_value, toNullString(default_text), default_text_value,
             value_item_value, text_item_value, values, function () {
                 console.log('Error at loading drop down with ' + dropdownElement.id + ' id.');
 
                 if (isNotNullAndUndefined(error_function) && isNullOrWhiteSpace(toNullString(error_function)) === false) {
-                    error_function();
+                    window[error_function]();
                 }
             }, pre_action, post_action);
     } catch (err) {
