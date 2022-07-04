@@ -56,15 +56,13 @@ function loadDropDownWithOps(dropDownId, dropDownUrl, selectedValue, defaultText
             // debugger;
             if (isNotNullAndUndefined(selectedValue) && isNullOrWhiteSpace(toNullString(selectedValue)) === false) {
                 setTimeout(function () {
-                    // debugger;
                     dropDown.val(selectedValue);
-                    //if (toNullString(dropDown.val()) !== toNullString(selectedValue)) {
-                    //}
                 }, 10);
+                // console.log(selectedValue);
             } else {
                 dropDown.prop('selectedIndex', 0);
             }
-            // console.log(selectedValue);
+
             triggerComponent('#' + dropDownId, 'change');
         } catch (err) {
             console.error(err);
