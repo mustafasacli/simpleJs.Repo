@@ -79,3 +79,7 @@ function encodeText(value) {
 
     return returnValue;
 }
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * (max + 1));
+}
